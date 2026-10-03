@@ -1,0 +1,16 @@
+services:
+  - type: web
+    name: mess-book
+    runtime: python
+    plan: free
+    region: singapore
+    buildCommand: ./build.sh
+    startCommand: cd backend && alembic upgrade head && uvicorn app.main:app --host 0.0.0.0 --port $PORT
+    healthCheckPath: /api/health
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.12.7
+      - key: NODE_VERSION
+        value: 22
+      - key: DATABASE_URL
+        sync: false
