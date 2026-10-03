@@ -15,6 +15,12 @@ def get_database_url() -> str:
     url = os.getenv("DATABASE_URL", "").strip()
     if not url:
         return f"sqlite:///{(BACKEND_DIR / 'mess.db').as_posix()}"
+    if not url.startswith(("postgres://", "postgresql://", "postgresql+", "sqlite")):
+        raise SystemExit(
+            "DATABASE_URL must be a Postgres connection string starting with postgresql:// "
+            f"(got one starting with {url.split(':', 1)[0]!r}). In Supabase open Connect -> "
+            "Session pooler and copy that URI — not the https:// Project URL."
+        )
     # Hosted providers hand out postgres:// or postgresql:// — use the psycopg 3 driver.
     if url.startswith("postgres://"):
         url = "postgresql+psycopg://" + url[len("postgres://"):]
